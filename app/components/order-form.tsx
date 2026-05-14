@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { submitOrder } from '@/app/actions'
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -161,13 +161,18 @@ export default function OrderForm({ districts }: { districts: District[] }) {
 
     setLoading(true)
     try {
-      await submitOrder({
-        firstname: name,
-        lastname: surname,
-        ismale: gender === 'Male',
-        stationId,
-        uniforms: selectedUniforms,
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstname: name,
+          lastname: surname,
+          ismale: gender === 'Male',
+          stationId,
+          uniforms: selectedUniforms,
+        }),
       })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       setSubmitted(true)
     } catch (err) {
       console.error(err)
@@ -197,10 +202,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Order Submitted!</h2>
-          <p className="text-gray-500 mb-8">Your kit order has been recorded successfully.</p>
-          <button onClick={resetForm} className="px-6 py-2.5 bg-green-700 text-white rounded-lg hover:bg-green-800 font-medium transition-colors">
-            Submit Another Order
-          </button>
+          <p className="text-gray-500">Your kit order has been recorded successfully.</p>
         </div>
       </div>
     )
