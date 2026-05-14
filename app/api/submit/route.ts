@@ -1,6 +1,7 @@
 import { Redis } from '@upstash/redis'
 import type { NextRequest } from 'next/server'
 import type { SubmitOrderInput } from '@/app/actions'
+import { processOrder } from '@/lib/process-order'
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -36,8 +37,16 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'Missing or invalid fields' }, { status: 422 })
   }
 
-  // Push onto the left end of the Redis list (LPUSH)
-  await redis.lpush(QUEUE_KEY, JSON.stringify(body))
-
-  return Response.json({ queued: true }, { status: 202 })
+  // Circuit breaker: try Hygraph directly first (fast path, low traffic).
+  // If Hygraph rejects the request (rate limit or any other error), fall back
+  // to the Redis queue so no submission is ever lost.
+  try {
+    await processOrder(body)
+    return Response.json({ method: 'direct' }, { status: 200 })
+  } catch {
+    // Hygraph unavailable or rate-limited — buffer in Redis.
+    // Push the object directly; the Upstash SDK serializes it to JSON.
+    await redis.lpush(QUEUE_KEY, body)
+    return Response.json({ method: 'queued' }, { status: 202 })
+  }
 }
