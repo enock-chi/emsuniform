@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -33,7 +34,8 @@ const KIT_CATEGORIES: KitCategory[] = [
     id: 'uniform_operation',
     name: 'UNIFORM OPERATION',
     items: [
-      { id: 'advance_rescue_suit',        name: 'Advance Rescue Suit',                sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'advance_rescue_suit_male',        name: 'Advance Rescue Suit (Male)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'advance_rescue_suit_female',      name: 'Advance Rescue Suit (Female)',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'base_ball_caps',             name: 'Base Ball Caps',                     sizes: ['One Size'] },
       { id: 'beanie_green',               name: 'Beanie Green',                       sizes: ['One Size'] },
       { id: 'combat_boots',               name: 'Combat Boots',                       sizes: ['3','4','5','6','7','8','9','10','11','12'] },
@@ -41,27 +43,35 @@ const KIT_CATEGORIES: KitCategory[] = [
       { id: 'combat_belt',                name: 'Combat Belt',                        sizes: ['S','M','L','XL'] },
       { id: 'combat_trouser_green',       name: 'Combat Trouser Green',               sizes: ['28','30','32','34','36','38','40','42'] },
       { id: 'epaulette',                  name: 'Epaulette',                          sizes: ['One Size'] },
-      { id: 'jersey_long_sleeve_green',   name: 'Jersey Long Sleeve Green',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'jump_suit_green',            name: 'Jump-Suit Green',                    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jersey_long_sleeve_green_male',   name: 'Jersey Long Sleeve Green (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jersey_long_sleeve_green_female', name: 'Jersey Long Sleeve Green (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jump_suit_green_male',            name: 'Jump-Suit Green (Male)',             sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jump_suit_green_female',          name: 'Jump-Suit Green (Female)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'rescue_gloves',              name: 'Rescue Gloves',                      sizes: ['S','M','L','XL'] },
       { id: 'rain_suit_two_piece_green',  name: 'Rain-Suit Two Piece Green',          sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_ss_green',             name: 'Shirt S/S Green',                    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_ls_green',             name: 'Shirt L/S Green',                    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ss_green_male',         name: 'Shirt S/S Green (Male)',             sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ss_green_female',       name: 'Shirt S/S Green (Female)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ls_green_male',         name: 'Shirt L/S Green (Male)',             sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ls_green_female',       name: 'Shirt L/S Green (Female)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'short_sleeve_tshirt',        name: 'Short Sleeve T-Shirt',               sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'socks_long_ops',             name: 'Socks Long For OPS',                 sizes: ['One Size'] },
       { id: 'socks_short_ops',            name: 'Socks Short For OPS',                sizes: ['One Size'] },
       { id: 'stars_of_life',              name: 'Stars Of Life',                      sizes: ['One Size'] },
       { id: 'id_qualification_badge',     name: 'Identification Qualification Badge', sizes: ['One Size'] },
-      { id: 'soft_shell_jacket_green',    name: 'Soft-Shell Jacket Green',            sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'reflective_jacket_green',    name: 'Reflective Jacket Green',            sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'soft_shell_jacket_green_male',    name: 'Soft-Shell Jacket Green (Male)',    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'soft_shell_jacket_green_female',  name: 'Soft-Shell Jacket Green (Female)',  sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'reflective_jacket_green_male',    name: 'Reflective Jacket Green (Male)',    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'reflective_jacket_green_female',  name: 'Reflective Jacket Green (Female)',  sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
     ],
   },
   {
     id: 'uniform_manager',
     name: 'UNIFORM MANAGER',
     items: [
-      { id: 'shirt_ss_white',       name: 'Shirt S/S White',       sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_ls_white',       name: 'Shirt L/S White',       sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ss_white_male',   name: 'Shirt S/S White (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ss_white_female', name: 'Shirt S/S White (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ls_white_male',   name: 'Shirt L/S White (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_ls_white_female', name: 'Shirt L/S White (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'stepout_trouser_belt', name: 'Stepout Trouser Belt',   sizes: ['S','M','L','XL'] },
       { id: 'stepout_trouser',      name: 'Stepout Trouser',        sizes: ['28','30','32','34','36','38','40','42'] },
       { id: 'stepout_skirt',        name: 'Stepout Skirt',          sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
@@ -81,8 +91,10 @@ const KIT_CATEGORIES: KitCategory[] = [
       { id: 'jean_control',           name: 'Jean For Control',       sizes: ['28','30','32','34','36','38','40','42'] },
       { id: 'scarf_control',          name: 'Scarf For Control',      sizes: ['One Size'] },
       { id: 'winter_bomber_jacket',   name: 'Winter Bomber Jacket',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_blue_ss_control',  name: 'Shirt Blue S/S Control', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_blue_ls_control',  name: 'Shirt Blue L/S Control', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_blue_ss_control_male',   name: 'Shirt Blue S/S Control (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_blue_ss_control_female', name: 'Shirt Blue S/S Control (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_blue_ls_control_male',   name: 'Shirt Blue L/S Control (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'shirt_blue_ls_control_female', name: 'Shirt Blue L/S Control (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'jersey_control',         name: 'Jersey Control',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'chino_trouser',          name: 'Chino Trouser',          sizes: ['28','30','32','34','36','38','40','42'] },
       { id: 'golfer_tshirt',          name: 'Golfer T-Shirt',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
@@ -208,14 +220,25 @@ export default function OrderForm({ districts }: { districts: District[] }) {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 pt-6 flex justify-end">
+        <Link
+          href="/orders"
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          View Orders
+        </Link>
+      </div>
+      <main className="max-w-4xl mx-auto px-4 py-6">
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
 
           {/* ── Section 1: Personal Details ── */}
           <section className="bg-white rounded-xl shadow overflow-hidden">
             <div className="bg-green-700 px-6 py-4 border-l-4 border-green-400">
-              <h2 className="text-white font-bold text-lg">1. Personal Details</h2>
-              <p className="text-green-200 text-sm">Employee information</p>
+              <h2 className="text-white font-bold text-lg">1. Station Manager Details</h2>
+              <p className="text-green-200 text-sm">Manager information</p>
             </div>
             <div className="p-6 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

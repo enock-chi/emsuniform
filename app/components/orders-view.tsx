@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import * as XLSX from 'xlsx'
 
 // ─── Excel helpers ────────────────────────────────────────────────────────────
@@ -426,16 +427,27 @@ export default function OrdersView({ data }: { data: OrdersData }) {
             <h1 className="text-2xl font-bold text-gray-800">Kit Orders</h1>
             <p className="text-gray-500 text-sm mt-0.5">Gauteng EMS uniform order overview</p>
           </div>
-          <button
-            onClick={tab === 'orders' ? handleExportOrders : handleExportSummary}
-            disabled={filteredRows.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors shadow disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download Excel
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Place Order
+            </Link>
+            <button
+              onClick={tab === 'orders' ? handleExportOrders : handleExportSummary}
+              disabled={filteredRows.length === 0}
+              className="flex items-center gap-2 px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors shadow disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download Excel
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
