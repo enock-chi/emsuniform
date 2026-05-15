@@ -55,10 +55,10 @@ function aggregateStation(orders: Order[]): ItemSummary[] {
       const qty = parseInt(u.quantity) || 1
       if (!map[u.name]) map[u.name] = { name: u.name, total: 0, male: 0, female: 0, maleSizes: {}, femaleSizes: {} }
       map[u.name].total += qty
-      if (o.ismale) {
+      if (u.name.endsWith('(Male)')) {
         map[u.name].male += qty
         map[u.name].maleSizes[u.size] = (map[u.name].maleSizes[u.size] ?? 0) + qty
-      } else {
+      } else if (u.name.endsWith('(Female)')) {
         map[u.name].female += qty
         map[u.name].femaleSizes[u.size] = (map[u.name].femaleSizes[u.size] ?? 0) + qty
       }
@@ -111,22 +111,6 @@ function flatten(districts: District[]): FlatRow[] {
   return rows
 }
 
-// ─── Canonical kit item list (used to fill '-' for unordered items) ──────────
-
-const KIT_ITEMS = [
-  { id: 'shirt_ss',    name: 'Uniform Shirt (Short Sleeve)' },
-  { id: 'shirt_ls',    name: 'Uniform Shirt (Long Sleeve)'  },
-  { id: 'trousers',    name: 'Uniform Trousers'             },
-  { id: 'fleece',      name: 'Fleece Jacket'                },
-  { id: 'rain_jacket', name: 'Rain Jacket'                  },
-  { id: 'vest',        name: 'Reflective Vest'              },
-  { id: 'boots',       name: 'Safety Boots'                 },
-  { id: 'cap',         name: 'Dress Cap'                    },
-  { id: 'tshirt',      name: 'Under T-Shirt'                },
-  { id: 'belt',        name: 'Belt'                         },
-  { id: 'epaulettes',  name: 'Epaulettes'                   },
-  { id: 'id_holder',   name: 'ID Badge Holder'              },
-]
 
 // ─── Empty state ─────────────────────────────────────────────────────────────
 
@@ -308,14 +292,13 @@ export default function OrdersView({ data }: { data: OrdersData }) {
       sheetRows.push([]) // blank
 
       for (const s of d.stattions) {
-        const summaryMap = Object.fromEntries(aggregateStation(s.orders).map(i => [i.name, i]))
+        const stationItems = aggregateStation(s.orders)
 
         // Station header row
         const stationRow = sheetRows.length
         sheetRows.push([`Station: ${s.name}`, '', '', '', '', ''])
 
         // Column header row
-        const colHeaderRow = sheetRows.length
         sheetRows.push(['Item', 'Total', 'Male', 'Male Sizes', 'Female', 'Female Sizes'])
 
         const dataStart = sheetRows.length
@@ -325,13 +308,12 @@ export default function OrdersView({ data }: { data: OrdersData }) {
             .map(([sz, cnt]) => `${sz}: ${cnt}`)
             .join(', ') || '-'
 
-        for (const kitItem of KIT_ITEMS) {
-          const entry = summaryMap[kitItem.name]
-          if (!entry) {
-            sheetRows.push([kitItem.name, '-', '-', '-', '-', '-'])
-          } else {
+        if (stationItems.length === 0) {
+          sheetRows.push(['No orders yet', '-', '-', '-', '-', '-'])
+        } else {
+          for (const entry of stationItems) {
             sheetRows.push([
-              kitItem.name,
+              entry.name,
               entry.total  || '-',
               entry.male   || '-',
               fmtSizes(entry.maleSizes),

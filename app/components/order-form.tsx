@@ -178,6 +178,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
         body: JSON.stringify({
           firstname: name,
           lastname: surname,
+          ismale: true,
           stationId,
           uniforms: selectedUniforms,
         }),
@@ -269,7 +270,6 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                   />
                 </div>
               </div>
-
 
             </div>
           </section>
