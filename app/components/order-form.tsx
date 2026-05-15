@@ -121,7 +121,6 @@ export default function OrderForm({ districts }: { districts: District[] }) {
 
   const [name,          setName]          = useState('')
   const [surname,       setSurname]       = useState('')
-  const [gender,        setGender]        = useState('')
   const [districtId,    setDistrictId]    = useState('')
   const [stationId,     setStationId]     = useState('')
   const [kitSelections, setKitSelections] = useState<KitSelection>(blankSelections)
@@ -167,7 +166,6 @@ export default function OrderForm({ districts }: { districts: District[] }) {
         body: JSON.stringify({
           firstname: name,
           lastname: surname,
-          ismale: gender === 'Male',
           stationId,
           uniforms: selectedUniforms,
         }),
@@ -184,7 +182,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
 
   const resetForm = () => {
     setName(''); setSurname('')
-    setGender(''); setDistrictId(''); setStationId('')
+    setDistrictId(''); setStationId('')
     setKitSelections(blankSelections())
     setSubmitted(false)
     setError(null)
@@ -249,27 +247,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Gender <span className="text-red-500">*</span>
-                </label>
-                <div className="flex gap-6 pt-1">
-                  {['Male', 'Female'].map(g => (
-                    <label key={g} className="flex items-center gap-2 cursor-pointer select-none">
-                      <input
-                        type="radio"
-                        name="gender"
-                        value={g}
-                        required
-                        checked={gender === g}
-                        onChange={() => setGender(g)}
-                        className="accent-green-700 w-4 h-4"
-                      />
-                      <span className="text-gray-700">{g}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+
             </div>
           </section>
 
