@@ -115,12 +115,15 @@ const KIT_CATEGORIES: KitCategory[] = [
 ]
 
 interface KitSelection {
-  [itemId: string]: { selected: boolean; size: string; qty: number }
+  [itemId: string]: { selected: boolean; sizes: Record<string, number> }
 }
 
 function blankSelections(): KitSelection {
   return Object.fromEntries(
-    KIT_CATEGORIES.flatMap(cat => cat.items).map(item => [item.id, { selected: false, size: item.sizes[0], qty: 1 }])
+    KIT_CATEGORIES.flatMap(cat => cat.items).map(item => [
+      item.id,
+      { selected: false, sizes: Object.fromEntries(item.sizes.map(s => [s, 0])) },
+    ])
   )
 }
 
@@ -147,26 +150,23 @@ export default function OrderForm({ districts }: { districts: District[] }) {
   const toggleItem = (id: string) =>
     setKitSelections(prev => ({ ...prev, [id]: { ...prev[id], selected: !prev[id].selected } }))
 
-  const updateSize = (id: string, size: string) =>
-    setKitSelections(prev => ({ ...prev, [id]: { ...prev[id], size } }))
-
-  const updateQty = (id: string, qty: number) =>
-    setKitSelections(prev => ({ ...prev, [id]: { ...prev[id], qty } }))
+  const updateSizeQty = (id: string, size: string, qty: number) =>
+    setKitSelections(prev => ({ ...prev, [id]: { ...prev[id], sizes: { ...prev[id].sizes, [size]: qty } } }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
     const selectedUniforms = KIT_CATEGORIES.flatMap(cat => cat.items)
-      .filter(item => kitSelections[item.id].selected)
-      .map(item => ({
-        name: item.name,
-        size: kitSelections[item.id].size,
-        quantity: String(kitSelections[item.id].qty),
-      }))
+      .flatMap(item => {
+        if (!kitSelections[item.id].selected) return []
+        return Object.entries(kitSelections[item.id].sizes)
+          .filter(([, qty]) => qty > 0)
+          .map(([size, qty]) => ({ name: item.name, size, quantity: String(qty) }))
+      })
 
     if (selectedUniforms.length === 0) {
-      setError('Please select at least one kit item.')
+      setError('Please select at least one kit item and enter a quantity.')
       return
     }
 
@@ -323,7 +323,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
           <section className="bg-white rounded-xl shadow overflow-hidden">
             <div className="bg-green-700 px-6 py-4 border-l-4 border-green-400">
               <h2 className="text-white font-bold text-lg">3. Kit Selection</h2>
-              <p className="text-green-200 text-sm">Check each item needed and set your size</p>
+              <p className="text-green-200 text-sm">Check each item, then enter quantities per size</p>
             </div>
             <div className="divide-y divide-gray-200">
               {KIT_CATEGORIES.map(category => (
@@ -345,40 +345,46 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                               className="accent-green-700 w-4 h-4 mt-1 cursor-pointer shrink-0"
                             />
                             <div className="flex-1">
-                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                                <label htmlFor={item.id} className="font-medium text-gray-800 cursor-pointer select-none">
-                                  {item.name}
-                                </label>
-                                <div className="flex flex-wrap gap-3">
-                                  {item.sizes.length > 1 ? (
+                              <label htmlFor={item.id} className="font-medium text-gray-800 cursor-pointer select-none block">
+                                {item.name}
+                              </label>
+                              {sel.selected && (
+                                <div className="mt-3">
+                                  {item.sizes[0] === 'One Size' ? (
                                     <div className="flex items-center gap-2">
-                                      <span className="text-xs font-medium text-gray-500">Size</span>
-                                      <select
-                                        value={sel.size}
-                                        onChange={e => updateSize(item.id, e.target.value)}
-                                        disabled={!sel.selected}
-                                        className="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-                                      >
-                                        {item.sizes.map(s => <option key={s} value={s}>{s}</option>)}
-                                      </select>
+                                      <span className="text-xs font-medium text-gray-500">Qty</span>
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        max={99}
+                                        value={sel.sizes['One Size']}
+                                        onChange={e => updateSizeQty(item.id, 'One Size', parseInt(e.target.value) || 0)}
+                                        className="border border-gray-300 rounded-md px-2 py-1.5 text-sm text-gray-700 w-16 text-center focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none"
+                                      />
                                     </div>
                                   ) : (
-                                    <span className="text-xs text-gray-400 italic self-center">One Size</span>
+                                    <div className="flex flex-wrap gap-2">
+                                      {item.sizes.map(size => (
+                                        <div key={size} className="flex flex-col items-center gap-1">
+                                          <span className="text-xs font-semibold text-gray-500">{size}</span>
+                                          <input
+                                            type="number"
+                                            min={0}
+                                            max={99}
+                                            value={sel.sizes[size]}
+                                            onChange={e => updateSizeQty(item.id, size, parseInt(e.target.value) || 0)}
+                                            className={`border rounded-md px-1 py-1.5 text-sm w-14 text-center outline-none transition-colors ${
+                                              sel.sizes[size] > 0
+                                                ? 'border-green-500 bg-green-100 text-green-800 font-semibold focus:border-green-600'
+                                                : 'border-gray-300 text-gray-600 focus:border-green-600'
+                                            }`}
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
                                   )}
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-medium text-gray-500">Qty</span>
-                                    <input
-                                      type="number"
-                                      min={1}
-                                      max={10}
-                                      value={sel.qty}
-                                      disabled={!sel.selected}
-                                      onChange={e => updateQty(item.id, Math.max(1, parseInt(e.target.value) || 1))}
-                                      className="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 w-16 focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-                                    />
-                                  </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
                           </div>
                         </div>
