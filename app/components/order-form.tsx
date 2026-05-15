@@ -134,11 +134,25 @@ export default function OrderForm({ districts }: { districts: District[] }) {
   const [loading,   setLoading]         = useState(false)
   const [error,     setError]           = useState<string | null>(null)
 
-  const [name,          setName]          = useState('')
-  const [surname,       setSurname]       = useState('')
-  const [districtId,    setDistrictId]    = useState('')
-  const [stationId,     setStationId]     = useState('')
-  const [kitSelections, setKitSelections] = useState<KitSelection>(blankSelections)
+  const [name,             setName]             = useState('')
+  const [surname,          setSurname]          = useState('')
+  const [recipientName,    setRecipientName]    = useState('')
+  const [recipientSurname, setRecipientSurname] = useState('')
+  const [recipientPercalId, setRecipientPercalId] = useState('')
+  const [districtId,       setDistrictId]       = useState('')
+  const [stationId,        setStationId]        = useState('')
+  const [kitSelections,    setKitSelections]    = useState<KitSelection>(blankSelections)
+  const [disclaimerTicked, setDisclaimerTicked] = useState(false)
+
+  function resetForNextEntry() {
+    setRecipientName('')
+    setRecipientSurname('')
+    setRecipientPercalId('')
+    setKitSelections(blankSelections())
+    setDisclaimerTicked(false)
+    setError(null)
+    setSubmitted(false)
+  }
 
   const selectedDistrict = districts.find(d => d.id === districtId)
 
@@ -147,15 +161,54 @@ export default function OrderForm({ districts }: { districts: District[] }) {
     setStationId('')
   }
 
-  const toggleItem = (id: string) =>
-    setKitSelections(prev => ({ ...prev, [id]: { ...prev[id], selected: !prev[id].selected } }))
+  const toggleItem = (id: string) => {
+    const item = KIT_CATEGORIES.flatMap(c => c.items).find(i => i.id === id)!
+    setKitSelections(prev => {
+      const next = !prev[id].selected
+      return {
+        ...prev,
+        [id]: {
+          selected: next,
+          sizes: item.sizes[0] === 'One Size' ? { 'One Size': next ? 1 : 0 } : prev[id].sizes,
+        },
+      }
+    })
+  }
 
   const updateSizeQty = (id: string, size: string, qty: number) =>
     setKitSelections(prev => ({ ...prev, [id]: { ...prev[id], sizes: { ...prev[id].sizes, [size]: qty } } }))
 
+  const selectSize = (id: string, size: string) => {
+    const item = KIT_CATEGORIES.flatMap(c => c.items).find(i => i.id === id)!
+    setKitSelections(prev => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        sizes: Object.fromEntries(item.sizes.map(s => [s, s === size ? 1 : 0])),
+      },
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (!name.trim() || !surname.trim()) {
+      setError('Please enter the station manager\'s first and last name.')
+      return
+    }
+    if (!recipientName.trim() || !recipientSurname.trim()) {
+      setError('Please enter the recipient\'s first and last name.')
+      return
+    }
+    if (!recipientPercalId.trim()) {
+      setError('Please enter the recipient\'s Persal ID.')
+      return
+    }
+    if (!stationId) {
+      setError('Please select a district and station.')
+      return
+    }
 
     const selectedUniforms = KIT_CATEGORIES.flatMap(cat => cat.items)
       .flatMap(item => {
@@ -166,7 +219,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
       })
 
     if (selectedUniforms.length === 0) {
-      setError('Please select at least one kit item and enter a quantity.')
+      setError('Please select at least one kit item and choose a size.')
       return
     }
 
@@ -178,6 +231,9 @@ export default function OrderForm({ districts }: { districts: District[] }) {
         body: JSON.stringify({
           firstname: name,
           lastname: surname,
+          recipientname: recipientName,
+          recipientlastaname: recipientSurname,
+          recipientpercalid: recipientPercalId,
           ismale: true,
           stationId,
           uniforms: selectedUniforms,
@@ -195,8 +251,10 @@ export default function OrderForm({ districts }: { districts: District[] }) {
 
   const resetForm = () => {
     setName(''); setSurname('')
+    setRecipientName(''); setRecipientSurname(''); setRecipientPercalId('')
     setDistrictId(''); setStationId('')
     setKitSelections(blankSelections())
+    setDisclaimerTicked(false)
     setSubmitted(false)
     setError(null)
   }
@@ -213,7 +271,13 @@ export default function OrderForm({ districts }: { districts: District[] }) {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Order Submitted!</h2>
-          <p className="text-gray-500">Your kit order has been recorded successfully.</p>
+          <p className="text-gray-500 mb-6">Your kit order has been recorded successfully.</p>
+          <button
+            onClick={resetForNextEntry}
+            className="w-full py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg transition-colors"
+          >
+            Submit Next Entry
+          </button>
         </div>
       </div>
     )
@@ -274,10 +338,61 @@ export default function OrderForm({ districts }: { districts: District[] }) {
             </div>
           </section>
 
-          {/* ── Section 2: Station Details ── */}
+          {/* ── Section 2: Recipient Details ── */}
           <section className="bg-white rounded-xl shadow overflow-hidden">
             <div className="bg-green-700 px-6 py-4 border-l-4 border-green-400">
-              <h2 className="text-white font-bold text-lg">2. Station Details</h2>
+              <h2 className="text-white font-bold text-lg">2. Recipient Details</h2>
+              <p className="text-green-200 text-sm">Person receiving the uniform</p>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    First Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={recipientName}
+                    onChange={e => setRecipientName(e.target.value)}
+                    className="w-full border-b-2 border-gray-300 focus:border-green-600 outline-none py-2 text-gray-800 bg-transparent transition-colors"
+                    placeholder="Enter first name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Surname <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={recipientSurname}
+                    onChange={e => setRecipientSurname(e.target.value)}
+                    className="w-full border-b-2 border-gray-300 focus:border-green-600 outline-none py-2 text-gray-800 bg-transparent transition-colors"
+                    placeholder="Enter surname"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Persal ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  type="text"
+                  value={recipientPercalId}
+                  onChange={e => setRecipientPercalId(e.target.value)}
+                  className="w-full border-b-2 border-gray-300 focus:border-green-600 outline-none py-2 text-gray-800 bg-transparent transition-colors"
+                  placeholder="Enter persal ID"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* ── Section 3: Station Details ── */}
+          <section className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="bg-green-700 px-6 py-4 border-l-4 border-green-400">
+              <h2 className="text-white font-bold text-lg">3. Station Details</h2>
               <p className="text-green-200 text-sm">Select your district and station</p>
             </div>
             <div className="p-6 space-y-5">
@@ -322,8 +437,8 @@ export default function OrderForm({ districts }: { districts: District[] }) {
           {/* ── Section 3: Kit Selection ── */}
           <section className="bg-white rounded-xl shadow overflow-hidden">
             <div className="bg-green-700 px-6 py-4 border-l-4 border-green-400">
-              <h2 className="text-white font-bold text-lg">3. Kit Selection</h2>
-              <p className="text-green-200 text-sm">Check each item, then enter quantities per size</p>
+              <h2 className="text-white font-bold text-lg">4. Kit Selection</h2>
+              <p className="text-green-200 text-sm">Tick each item needed — then select the applicable sizes</p>
             </div>
             <div className="divide-y divide-gray-200">
               {KIT_CATEGORIES.map(category => (
@@ -348,41 +463,26 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                               <label htmlFor={item.id} className="font-medium text-gray-800 cursor-pointer select-none block">
                                 {item.name}
                               </label>
-                              {sel.selected && (
-                                <div className="mt-3">
-                                  {item.sizes[0] === 'One Size' ? (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-xs font-medium text-gray-500">Qty</span>
+                              {sel.selected && item.sizes[0] !== 'One Size' && (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                  {item.sizes.map(size => (
+                                    <label
+                                      key={size}
+                                      className={`flex items-center gap-1.5 cursor-pointer rounded-lg px-3 py-1.5 border transition-colors select-none ${
+                                        sel.sizes[size]
+                                          ? 'border-green-500 bg-green-100 text-green-800 font-semibold'
+                                          : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                                      }`}
+                                    >
                                       <input
-                                        type="number"
-                                        min={0}
-                                        max={99}
-                                        value={sel.sizes['One Size']}
-                                        onChange={e => updateSizeQty(item.id, 'One Size', parseInt(e.target.value) || 0)}
-                                        className="border border-gray-300 rounded-md px-2 py-1.5 text-sm text-gray-700 w-16 text-center focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none"
+                                        type="checkbox"
+                                        checked={!!sel.sizes[size]}
+                                        onChange={e => e.target.checked ? selectSize(item.id, size) : updateSizeQty(item.id, size, 0)}
+                                        className="accent-green-700 w-3.5 h-3.5"
                                       />
-                                    </div>
-                                  ) : (
-                                    <div className="flex flex-wrap gap-2">
-                                      {item.sizes.map(size => (
-                                        <div key={size} className="flex flex-col items-center gap-1">
-                                          <span className="text-xs font-semibold text-gray-500">{size}</span>
-                                          <input
-                                            type="number"
-                                            min={0}
-                                            max={99}
-                                            value={sel.sizes[size]}
-                                            onChange={e => updateSizeQty(item.id, size, parseInt(e.target.value) || 0)}
-                                            className={`border rounded-md px-1 py-1.5 text-sm w-14 text-center outline-none transition-colors ${
-                                              sel.sizes[size] > 0
-                                                ? 'border-green-500 bg-green-100 text-green-800 font-semibold focus:border-green-600'
-                                                : 'border-gray-300 text-gray-600 focus:border-green-600'
-                                            }`}
-                                          />
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
+                                      <span className="text-sm">{size}</span>
+                                    </label>
+                                  ))}
                                 </div>
                               )}
                             </div>
@@ -396,13 +496,31 @@ export default function OrderForm({ districts }: { districts: District[] }) {
             </div>
           </section>
 
+          {/* ── Disclaimer ── */}
+          <section className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-3">Declaration</p>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={disclaimerTicked}
+                  onChange={e => setDisclaimerTicked(e.target.checked)}
+                  className="accent-green-700 w-4 h-4 mt-0.5 shrink-0"
+                />
+                <span className="text-sm text-gray-700 leading-relaxed">
+                  I, the station manager, confirm that I have consulted with the named recipient regarding this order, that all selected items and sizes are correct and agreed upon, and that I am authorised to submit this uniform order on their behalf.
+                </span>
+              </label>
+            </div>
+          </section>
+
           {error && (
             <p className="text-red-600 text-sm text-center">{error}</p>
           )}
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !disclaimerTicked}
             className="w-full py-3.5 bg-green-700 text-white font-bold rounded-xl hover:bg-green-800 active:bg-green-900 transition-colors shadow-md text-lg tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? 'Submitting…' : 'Submit Kit Order'}

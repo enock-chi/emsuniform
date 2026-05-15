@@ -30,6 +30,9 @@ export async function POST(request: NextRequest) {
   if (
     typeof body.firstname !== 'string' || !body.firstname.trim() ||
     typeof body.lastname !== 'string' || !body.lastname.trim() ||
+    typeof body.recipientname !== 'string' || !body.recipientname.trim() ||
+    typeof body.recipientlastaname !== 'string' || !body.recipientlastaname.trim() ||
+    typeof body.recipientpercalid !== 'string' || !body.recipientpercalid.trim() ||
     typeof body.ismale !== 'boolean' ||
     typeof body.stationId !== 'string' || !body.stationId.trim() ||
     !Array.isArray(body.uniforms) || body.uniforms.length === 0
@@ -43,10 +46,12 @@ export async function POST(request: NextRequest) {
   try {
     await processOrder(body)
     return Response.json({ method: 'direct' }, { status: 200 })
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[submit] Hygraph error, queuing:', message)
     // Hygraph unavailable or rate-limited — buffer in Redis.
     // Push the object directly; the Upstash SDK serializes it to JSON.
     await redis.lpush(QUEUE_KEY, body)
-    return Response.json({ method: 'queued' }, { status: 202 })
+    return Response.json({ method: 'queued', reason: message }, { status: 202 })
   }
 }

@@ -26,6 +26,9 @@ interface Order {
   id: string
   firstname: string
   lastname: string
+  recipientname: string
+  recipientlastaname: string
+  percal: string
   ismale: boolean
   createdAt: string
   uniforms: Uniform[]
@@ -87,7 +90,7 @@ interface FlatRow {
   station: string
   firstname: string
   lastname: string
-  gender: string
+  percalid: string
   date: string
   item: string
   size: string
@@ -100,12 +103,11 @@ function flatten(districts: District[]): FlatRow[] {
     for (const s of d.stattions) {
       for (const o of s.orders) {
         const date = new Date(o.createdAt).toLocaleDateString('en-ZA')
-        const gender = o.ismale ? 'Male' : 'Female'
         if (o.uniforms.length === 0) {
-          rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, gender, date, item: '—', size: '—', quantity: 0 })
+          rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, percalid: o.percal ?? '', date, item: '—', size: '—', quantity: 0 })
         } else {
           for (const u of o.uniforms) {
-            rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, gender, date, item: u.name, size: u.size, quantity: parseInt(u.quantity) || 1 })
+            rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, percalid: o.percal ?? '', date, item: u.name, size: u.size, quantity: parseInt(u.quantity) || 1 })
           }
         }
       }
@@ -228,7 +230,7 @@ export default function OrdersView({ data }: { data: OrdersData }) {
   // ── Excel exports ─────────────────────────────────────────────────────────
 
   const handleExportOrders = () => {
-    const headers = ['District', 'Station', 'First Name', 'Last Name', 'Gender', 'Date', 'Item', 'Size', 'Qty']
+    const headers = ['District', 'Station', 'First Name', 'Last Name', 'Recipient Persal ID', 'Date', 'Item', 'Size', 'Qty']
     // Always export ALL data regardless of filter
     const allFlatRows = flatten(data.districts)
     const rows = allFlatRows.map(r => [
@@ -236,14 +238,14 @@ export default function OrdersView({ data }: { data: OrdersData }) {
       r.station   || '-',
       r.firstname || '-',
       r.lastname  || '-',
-      r.gender    || '-',
+      r.percalid  || '-',
       r.date      || '-',
       r.item      || '-',
       r.size      || '-',
       r.quantity  || '-',
     ])
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows])
-    ws['!cols'] = [24, 22, 14, 14, 8, 12, 36, 10, 6].map(w => ({ wch: w }))
+    ws['!cols'] = [24, 22, 14, 14, 14, 12, 36, 10, 6].map(w => ({ wch: w }))
 
     // Bold + background header row
     const numCols = headers.length
@@ -548,7 +550,7 @@ export default function OrdersView({ data }: { data: OrdersData }) {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-green-700 text-white text-left">
-                      {['District', 'Station', 'First Name', 'Last Name', 'Gender', 'Date', 'Item', 'Size', 'Qty'].map(h => (
+                      {['District', 'Station', 'First Name', 'Last Name', 'Recipient Persal ID', 'Date', 'Item', 'Size', 'Qty'].map(h => (
                         <th key={h} className="px-4 py-3 font-semibold whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -560,7 +562,7 @@ export default function OrdersView({ data }: { data: OrdersData }) {
                         <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap">{r.station}</td>
                         <td className="px-4 py-2.5 font-medium text-gray-800 whitespace-nowrap">{r.firstname}</td>
                         <td className="px-4 py-2.5 font-medium text-gray-800 whitespace-nowrap">{r.lastname}</td>
-                        <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap">{r.gender}</td>
+                        <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap">{r.percalid || '—'}</td>
                         <td className="px-4 py-2.5 text-gray-500 whitespace-nowrap">{r.date}</td>
                         <td className="px-4 py-2.5 text-gray-700 whitespace-nowrap">{r.item}</td>
                         <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap">{r.size}</td>

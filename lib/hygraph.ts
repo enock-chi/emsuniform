@@ -33,7 +33,8 @@ export async function hygraphQuery<T = Record<string, unknown>>(
   })
 
   if (!res.ok) {
-    throw new Error(`Hygraph request failed: ${res.status} ${res.statusText}`)
+    const body = await res.text().catch(() => '')
+    throw new Error(`Hygraph request failed: ${res.status} ${res.statusText} — ${body}`)
   }
 
   const json = (await res.json()) as { data?: T; errors?: { message: string }[] }

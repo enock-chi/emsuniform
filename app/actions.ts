@@ -11,6 +11,9 @@ interface UniformInput {
 export interface SubmitOrderInput {
   firstname: string
   lastname: string
+  recipientname: string
+  recipientlastaname: string
+  recipientpercalid: string
   ismale: boolean
   stationId: string
   uniforms: UniformInput[]

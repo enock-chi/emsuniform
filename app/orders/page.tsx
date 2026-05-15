@@ -1,6 +1,8 @@
 import { hygraphQuery } from '@/lib/hygraph'
 import OrdersView, { type OrdersData } from '@/app/components/orders-view'
 
+export const dynamic = 'force-dynamic'
+
 async function getOrdersData(): Promise<OrdersData> {
   const { districts } = await hygraphQuery<{ districts: OrdersData['districts'] }>(`
     query {
@@ -14,6 +16,9 @@ async function getOrdersData(): Promise<OrdersData> {
             id
             firstname
             lastname
+            recipientname
+            recipientlastaname
+            percal
             ismale
             createdAt
             uniforms {
