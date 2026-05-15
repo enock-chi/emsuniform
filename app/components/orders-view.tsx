@@ -55,10 +55,13 @@ function aggregateStation(orders: Order[]): ItemSummary[] {
       const qty = parseInt(u.quantity) || 1
       if (!map[u.name]) map[u.name] = { name: u.name, total: 0, male: 0, female: 0, maleSizes: {}, femaleSizes: {} }
       map[u.name].total += qty
-      if (u.name.endsWith('(Male)')) {
+      const isMaleItem   = u.name.endsWith('(Male)')
+      const isFemaleItem = u.name.endsWith('(Female)')
+      const countAsMale  = isMaleItem  || (!isFemaleItem && o.ismale)
+      if (countAsMale) {
         map[u.name].male += qty
         map[u.name].maleSizes[u.size] = (map[u.name].maleSizes[u.size] ?? 0) + qty
-      } else if (u.name.endsWith('(Female)')) {
+      } else {
         map[u.name].female += qty
         map[u.name].femaleSizes[u.size] = (map[u.name].femaleSizes[u.size] ?? 0) + qty
       }
@@ -128,18 +131,10 @@ function EmptyState() {
 
 // ─── Station summary table ────────────────────────────────────────────────────
 
-function SizeChips({ sizes, color }: { sizes: Record<string, number>; color: string }) {
+function sizesString(sizes: Record<string, number>): string {
   const entries = Object.entries(sizes).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
-  if (entries.length === 0) return <span className="text-gray-300 text-xs">—</span>
-  return (
-    <div className="flex flex-wrap gap-1">
-      {entries.map(([size, count]) => (
-        <span key={size} className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ${color}`}>
-          {size} <span className="font-bold">×{count}</span>
-        </span>
-      ))}
-    </div>
-  )
+  if (entries.length === 0) return '—'
+  return entries.map(([size, count]) => count > 1 ? `${size}×${count}` : size).join(', ')
 }
 
 function StationSummaryTable({ items }: { items: ItemSummary[] }) {
@@ -165,9 +160,9 @@ function StationSummaryTable({ items }: { items: ItemSummary[] }) {
                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-800 font-bold text-sm">{item.total}</span>
               </td>
               <td className="px-4 py-3 text-center text-blue-700 font-semibold">{item.male || '—'}</td>
-              <td className="px-4 py-3"><SizeChips sizes={item.maleSizes} color="bg-blue-50 text-blue-700" /></td>
+              <td className="px-4 py-3 text-blue-600 text-sm">{sizesString(item.maleSizes)}</td>
               <td className="px-4 py-3 text-center text-pink-600 font-semibold">{item.female || '—'}</td>
-              <td className="px-4 py-3"><SizeChips sizes={item.femaleSizes} color="bg-pink-50 text-pink-600" /></td>
+              <td className="px-4 py-3 text-pink-500 text-sm">{sizesString(item.femaleSizes)}</td>
             </tr>
           ))}
         </tbody>
