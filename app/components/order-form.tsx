@@ -41,7 +41,7 @@ const KIT_CATEGORIES: KitCategory[] = [
       { id: 'combat_boots',               name: 'Combat Boots',                       sizes: ['3','4','5','6','7','8','9','10','11','12'] },
       { id: 'bunny_jacket_green',         name: 'Bunny Jacket Green',                 sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'combat_belt',                name: 'Combat Belt',                        sizes: ['S','M','L','XL'] },
-      { id: 'combat_trouser_green',       name: 'Combat Trouser Green',               sizes: ['28','30','32','34','36','38','40','42'] },
+      { id: 'combat_trouser_green',       name: 'Combat Trouser Green',               sizes: ['28','30','32','34','36','38','40','42','44','46','48','50'] },
       { id: 'epaulette',                  name: 'Epaulette',                          sizes: ['One Size'] },
       { id: 'jersey_long_sleeve_green_male',   name: 'Jersey Long Sleeve Green (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'jersey_long_sleeve_green_female', name: 'Jersey Long Sleeve Green (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
