@@ -14,6 +14,7 @@ export interface SubmitOrderInput {
   recipientname: string
   recipientlastaname: string
   recipientpercalid: string
+  rank: string
   ismale: boolean
   stationId: string
   uniforms: UniformInput[]

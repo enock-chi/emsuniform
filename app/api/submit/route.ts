@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     typeof body.recipientname !== 'string' || !body.recipientname.trim() ||
     typeof body.recipientlastaname !== 'string' || !body.recipientlastaname.trim() ||
     typeof body.recipientpercalid !== 'string' || !body.recipientpercalid.trim() ||
+    typeof body.rank !== 'string' || !body.rank.trim() ||
     typeof body.ismale !== 'boolean' ||
     typeof body.stationId !== 'string' || !body.stationId.trim() ||
     !Array.isArray(body.uniforms) || body.uniforms.length === 0

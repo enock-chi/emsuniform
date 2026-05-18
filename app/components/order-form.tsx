@@ -45,8 +45,8 @@ const KIT_CATEGORIES: KitCategory[] = [
       { id: 'epaulette',                  name: 'Epaulette',                          sizes: ['One Size'] },
       { id: 'jersey_long_sleeve_green_male',   name: 'Jersey Long Sleeve Green (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'jersey_long_sleeve_green_female', name: 'Jersey Long Sleeve Green (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'jump_suit_green_male',            name: 'Jump-Suit Green (Male)',             sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'jump_suit_green_female',          name: 'Jump-Suit Green (Female)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jump_suit_green_male',            name: 'Jump-Suit Green (Male)',             sizes: ['32','34','38','40','42','44','46','48','50'] },
+      { id: 'jump_suit_green_female',          name: 'Jump-Suit Green (Female)',           sizes: ['32','34','38','40','42','44','46','48','50'] },
       { id: 'rescue_gloves',              name: 'Rescue Gloves',                      sizes: ['S','M','L','XL'] },
       { id: 'rain_suit_two_piece_green',  name: 'Rain-Suit Two Piece Green',          sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_ss_green_male',         name: 'Shirt S/S Green (Male)',             sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
@@ -139,6 +139,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
   const [recipientName,    setRecipientName]    = useState('')
   const [recipientSurname, setRecipientSurname] = useState('')
   const [recipientPercalId, setRecipientPercalId] = useState('')
+  const [rank, setRank] = useState('')
   const [districtId,       setDistrictId]       = useState('')
   const [stationId,        setStationId]        = useState('')
   const [kitSelections,    setKitSelections]    = useState<KitSelection>(blankSelections)
@@ -150,6 +151,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
     setRecipientPercalId('')
     setKitSelections(blankSelections())
     setDisclaimerTicked(false)
+    setRank('')
     setError(null)
     setSubmitted(false)
   }
@@ -209,6 +211,10 @@ export default function OrderForm({ districts }: { districts: District[] }) {
       setError('Please select a district and station.')
       return
     }
+    if (!rank.trim()) {
+      setError('Please enter the qualification or rank.')
+      return
+    }
 
     const selectedUniforms = KIT_CATEGORIES.flatMap(cat => cat.items)
       .flatMap(item => {
@@ -234,6 +240,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
           recipientname: recipientName,
           recipientlastaname: recipientSurname,
           recipientpercalid: recipientPercalId,
+          rank,
           ismale: true,
           stationId,
           uniforms: selectedUniforms,
@@ -255,6 +262,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
     setDistrictId(''); setStationId('')
     setKitSelections(blankSelections())
     setDisclaimerTicked(false)
+    setRank('')
     setSubmitted(false)
     setError(null)
   }
@@ -334,7 +342,27 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                   />
                 </div>
               </div>
-
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Qualification & Rank <span className="text-red-500">*</span>
+                </label>
+                <select
+                  required
+                  value={rank}
+                  onChange={e => setRank(e.target.value)}
+                  className="w-full border-b-2 border-gray-300 focus:border-green-600 outline-none py-2 text-gray-800 bg-transparent transition-colors"
+                >
+                  <option value="">— Select Qualification & Rank —</option>
+                  <option value="ECO-BLS">ECO-BLS</option>
+                  <option value="ECO-ILS">ECO-ILS</option>
+                  <option value="ECO-ALS">ECO-ALS</option>
+                  <option value="ECO-ECT">ECO-ECT</option>
+                  <option value="Station Manager">Station Manager</option>
+                  <option value="Shift Leader">Shift Leader</option>
+                  <option value="Sub-District Manager">Sub-District Manager</option>
+                  <option value="District Manager">District Manager</option>
+                </select>
+              </div>
             </div>
           </section>
 
@@ -386,6 +414,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                   placeholder="Enter persal ID"
                 />
               </div>
+
             </div>
           </section>
 

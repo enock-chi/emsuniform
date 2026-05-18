@@ -28,6 +28,7 @@ export async function processOrder(input: SubmitOrderInput): Promise<void> {
       $reciepontname: String!
       $reciepontlastaname: String!
       $percal: String!
+      $rank: String!
       $ismale: Boolean!
       $uniformIds: [UniformWhereUniqueInput!]
     ) {
@@ -37,6 +38,7 @@ export async function processOrder(input: SubmitOrderInput): Promise<void> {
         recipientname: $reciepontname
         recipientlastaname: $reciepontlastaname
         percal: $percal
+        rank: $rank
         ismale: $ismale
         uniforms: { connect: $uniformIds }
       }) {
@@ -50,6 +52,7 @@ export async function processOrder(input: SubmitOrderInput): Promise<void> {
       reciepontname: input.recipientname,
       reciepontlastaname: input.recipientlastaname,
       percal: input.recipientpercalid,
+      rank: input.rank,
       ismale: input.ismale,
       uniformIds: uniformIds.map(id => ({ id })),
     },
