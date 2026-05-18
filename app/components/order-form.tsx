@@ -342,27 +342,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Qualification & Rank <span className="text-red-500">*</span>
-                </label>
-                <select
-                  required
-                  value={rank}
-                  onChange={e => setRank(e.target.value)}
-                  className="w-full border-b-2 border-gray-300 focus:border-green-600 outline-none py-2 text-gray-800 bg-transparent transition-colors"
-                >
-                  <option value="">— Select Qualification & Rank —</option>
-                  <option value="ECO-BLS">ECO-BLS</option>
-                  <option value="ECO-ILS">ECO-ILS</option>
-                  <option value="ECO-ALS">ECO-ALS</option>
-                  <option value="ECO-ECT">ECO-ECT</option>
-                  <option value="Station Manager">Station Manager</option>
-                  <option value="Shift Leader">Shift Leader</option>
-                  <option value="Sub-District Manager">Sub-District Manager</option>
-                  <option value="District Manager">District Manager</option>
-                </select>
-              </div>
+
             </div>
           </section>
 
@@ -413,6 +393,27 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                   className="w-full border-b-2 border-gray-300 focus:border-green-600 outline-none py-2 text-gray-800 bg-transparent transition-colors"
                   placeholder="Enter persal ID"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Qualification & Rank <span className="text-red-500">*</span>
+                </label>
+                <select
+                  required
+                  value={rank}
+                  onChange={e => setRank(e.target.value)}
+                  className="w-full border-b-2 border-gray-300 focus:border-green-600 outline-none py-2 text-gray-800 bg-transparent transition-colors"
+                >
+                  <option value="">— Select Qualification & Rank —</option>
+                  <option value="ECO-BLS">ECO-BLS</option>
+                  <option value="ECO-ILS">ECO-ILS</option>
+                  <option value="ECO-ALS">ECO-ALS</option>
+                  <option value="ECO-ECT">ECO-ECT</option>
+                  <option value="Station Manager">Station Manager</option>
+                  <option value="Shift Leader">Shift Leader</option>
+                  <option value="Sub-District Manager">Sub-District Manager</option>
+                  <option value="District Manager">District Manager</option>
+                </select>
               </div>
 
             </div>
