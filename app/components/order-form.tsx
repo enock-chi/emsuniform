@@ -51,7 +51,7 @@ interface KitCategory {
   items: KitItem[]
 }
 
-const KIT_CATEGORIES: KitCategory[] = [
+export const KIT_CATEGORIES: KitCategory[] = [
   {
     id: 'uniform_operation',
     name: 'UNIFORM OPERATION',

@@ -1,5 +1,5 @@
 "use client";
-import { exportAllOrdersExcel, exportSummaryExcel } from '../../lib/excel-exports';
+import { exportAllOrdersExcel, exportSummaryExcel, exportItemSizeMatrixExcel } from '../../lib/excel-exports';
 import { useState } from 'react';
 import type { District } from '../components/order-form';
 
@@ -17,7 +17,7 @@ export default function DownloadsClient({ districts }: DownloadsClientProps) {
     exportAllOrdersExcel(districts);
   };
   const handleDownloadPlaceholder = () => {
-    alert("Placeholder for third download");
+    exportItemSizeMatrixExcel(districts);
   };
 
   return (
@@ -41,7 +41,7 @@ export default function DownloadsClient({ districts }: DownloadsClientProps) {
             onClick={handleDownloadPlaceholder}
             className="px-6 py-3 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-500 transition-colors shadow"
           >
-            Placeholder Download
+            Download Item Size Matrix Excel
           </button>
         </div>
       </main>

@@ -1,3 +1,60 @@
+// ─── Item × Size Matrix Export ─────────────────────────────────────────────
+import { KIT_CATEGORIES } from '../app/components/order-form';
+
+export function exportItemSizeMatrixExcel(districts: District[]) {
+  // Build a set of all item names and all sizes for each item
+  const itemMap: Record<string, Set<string>> = {};
+  for (const cat of KIT_CATEGORIES) {
+    for (const item of cat.items) {
+      if (!itemMap[item.name]) itemMap[item.name] = new Set();
+      for (const sz of item.sizes) itemMap[item.name].add(sz);
+    }
+  }
+  // Build a matrix: item × size → total quantity
+  const matrix: Record<string, Record<string, number>> = {};
+  for (const d of districts) {
+    for (const s of d.stattions) {
+      for (const o of s.orders) {
+        for (const u of o.uniforms) {
+          if (!matrix[u.name]) matrix[u.name] = {};
+          matrix[u.name][u.size] = (matrix[u.name][u.size] || 0) + (parseInt(u.quantity) || 1);
+        }
+      }
+    }
+  }
+  // Prepare columns: first column is Item, then all unique sizes (sorted)
+  const allSizes = Array.from(new Set(Object.values(itemMap).flatMap(s => Array.from(s)))).sort((a, b) => {
+    // Try numeric sort, fallback to string
+    const na = parseInt(a), nb = parseInt(b);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b, undefined, { numeric: true });
+  });
+  const headers = ['Item', ...allSizes];
+  const rows = Object.keys(itemMap).sort().map(itemName => {
+    const row = [itemName];
+    for (const sz of allSizes) {
+      const val = matrix[itemName]?.[sz];
+      row.push(val !== undefined ? String(val) : '');
+    }
+    return row;
+  });
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = headers.map(() => ({ wch: 12 }));
+  // Style header row
+  for (let c = 0; c < headers.length; c++) {
+    const cell = ws[XLSX.utils.encode_cell({ r: 0, c })];
+    if (!cell) continue;
+    cell.s = {
+      font: { bold: true, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '1A7A3C' } },
+      border: THIN_BORDER,
+      alignment: { horizontal: 'center' },
+    };
+  }
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Item Size Matrix');
+  XLSX.writeFile(wb, `ems-item-size-matrix-${new Date().toISOString().slice(0, 10)}.xlsx`, { cellStyles: true });
+}
 // ─── ItemSummary type for aggregateStation ────────────────────────────────
 interface ItemSummary {
   name: string;
