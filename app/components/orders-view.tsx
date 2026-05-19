@@ -213,6 +213,21 @@ export default function OrdersView({ data }: { data: OrdersData }) {
     return [{ ...d, stattions: d.stattions.filter(s => s.id === filterStation) }]
   }, [districts, filterDistrict, filterStation])
 
+  // ── Toggle logic for collapsible sections ──
+  const toggleDistrict = (id: string) =>
+    setOpenDistricts(prev => {
+      const n = new Set(prev)
+      n.has(id) ? n.delete(id) : n.add(id)
+      return n
+    })
+
+  const toggleStation = (id: string) =>
+    setOpenStations(prev => {
+      const n = new Set(prev)
+      n.has(id) ? n.delete(id) : n.add(id)
+      return n
+    })
+
   // ── Stats ─────────────────────────────────────────────────────────────────
 
   const totalOrders = useMemo(() => {
@@ -229,170 +244,9 @@ export default function OrdersView({ data }: { data: OrdersData }) {
 
   // ── Excel exports ─────────────────────────────────────────────────────────
 
-  const handleExportOrders = () => {
-    const headers = ['District', 'Station', 'First Name', 'Last Name', 'Recipient Persal ID', 'Date', 'Item', 'Size', 'Qty']
-    // Always export ALL data regardless of filter
-    const allFlatRows = flatten(data.districts)
-    const rows = allFlatRows.map(r => [
-      r.district  || '-',
-      r.station   || '-',
-      r.firstname || '-',
-      r.lastname  || '-',
-      r.percalid  || '-',
-      r.date      || '-',
-      r.item      || '-',
-      r.size      || '-',
-      r.quantity  || '-',
-    ])
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows])
-    ws['!cols'] = [24, 22, 14, 14, 14, 12, 36, 10, 6].map(w => ({ wch: w }))
 
-    // Bold + background header row
-    const numCols = headers.length
-    for (let c = 0; c < numCols; c++) {
-      const cell = ws[XLSX.utils.encode_cell({ r: 0, c })]
-      if (!cell) continue
-      cell.s = {
-        font:    { bold: true, color: { rgb: 'FFFFFF' } },
-        fill:    { fgColor: { rgb: '1A7A3C' } },
-        border:  THIN_BORDER,
-        alignment: { horizontal: 'center' },
-      }
-    }
-    // Borders on all data rows
-    for (let r = 1; r <= rows.length; r++) {
-      for (let c = 0; c < numCols; c++) {
-        const cell = ws[XLSX.utils.encode_cell({ r, c })]
-        if (!cell) continue
-        cell.s = { border: THIN_BORDER, alignment: { horizontal: c >= numCols - 1 ? 'center' : 'left' } }
-      }
-    }
 
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'All Orders')
-    XLSX.writeFile(wb, `ems-orders-${new Date().toISOString().slice(0, 10)}.xlsx`, { cellStyles: true })
-  }
 
-  const handleExportSummary = () => {
-    const wb = XLSX.utils.book_new()
-
-    // Always export ALL districts regardless of filter
-    for (const d of data.districts) {
-      const sheetRows: (string | number)[][] = []
-      // Track which spreadsheet row each section starts at for styling
-      const sectionMeta: { districtRow?: number; stationRows: { headerRow: number; dataStart: number; dataEnd: number }[] } =
-        { stationRows: [] }
-
-      // District title row
-      sectionMeta.districtRow = sheetRows.length
-      sheetRows.push([`DISTRICT: ${d.name}`, '', '', '', '', ''])
-      sheetRows.push([]) // blank
-
-      for (const s of d.stattions) {
-        const stationItems = aggregateStation(s.orders)
-
-        // Station header row
-        const stationRow = sheetRows.length
-        sheetRows.push([`Station: ${s.name}`, '', '', '', '', ''])
-
-        // Column header row
-        sheetRows.push(['Item', 'Total', 'Male', 'Male Sizes', 'Female', 'Female Sizes'])
-
-        const dataStart = sheetRows.length
-        const fmtSizes = (sizes: Record<string, number>) =>
-          Object.entries(sizes)
-            .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
-            .map(([sz, cnt]) => `${sz}: ${cnt}`)
-            .join(', ') || '-'
-
-        if (stationItems.length === 0) {
-          sheetRows.push(['No orders yet', '-', '-', '-', '-', '-'])
-        } else {
-          for (const entry of stationItems) {
-            sheetRows.push([
-              entry.name,
-              entry.total  || '-',
-              entry.male   || '-',
-              fmtSizes(entry.maleSizes),
-              entry.female || '-',
-              fmtSizes(entry.femaleSizes),
-            ])
-          }
-        }
-        const dataEnd = sheetRows.length - 1
-
-        sectionMeta.stationRows.push({ headerRow: stationRow, dataStart, dataEnd })
-        sheetRows.push([]) // blank separator
-      }
-
-      const ws = XLSX.utils.aoa_to_sheet(sheetRows)
-      ws['!cols'] = [38, 9, 9, 36, 9, 36].map(w => ({ wch: w }))
-      const NC = 6
-
-      // Style district title
-      if (sectionMeta.districtRow !== undefined) {
-        for (let c = 0; c < NC; c++) {
-          const cell = ws[XLSX.utils.encode_cell({ r: sectionMeta.districtRow, c })]
-          if (!cell) continue
-          cell.s = {
-            font:  { bold: true, sz: 13, color: { rgb: 'FFFFFF' } },
-            fill:  { fgColor: { rgb: '145C2C' } },
-            border: THIN_BORDER,
-            alignment: { horizontal: 'left' },
-          }
-        }
-      }
-
-      for (const { headerRow, dataStart, dataEnd } of sectionMeta.stationRows) {
-        // Station label row
-        for (let c = 0; c < NC; c++) {
-          const cell = ws[XLSX.utils.encode_cell({ r: headerRow, c })]
-          if (!cell) continue
-          cell.s = {
-            font:  { bold: true, color: { rgb: 'FFFFFF' } },
-            fill:  { fgColor: { rgb: '1A7A3C' } },
-            border: THIN_BORDER,
-            alignment: { horizontal: 'left' },
-          }
-        }
-        // Column header row (row just before dataStart)
-        for (let c = 0; c < NC; c++) {
-          const cell = ws[XLSX.utils.encode_cell({ r: dataStart - 1, c })]
-          if (!cell) continue
-          cell.s = {
-            font:  { bold: true, color: { rgb: '1A3A2C' } },
-            fill:  { fgColor: { rgb: 'D1FAE5' } },
-            border: THIN_BORDER,
-            alignment: { horizontal: c === 0 ? 'left' : 'center' },
-          }
-        }
-        // Data rows — alternate row shading
-        for (let r = dataStart; r <= dataEnd; r++) {
-          const even = (r - dataStart) % 2 === 0
-          for (let c = 0; c < NC; c++) {
-            const cell = ws[XLSX.utils.encode_cell({ r, c })]
-            if (!cell) continue
-            cell.s = {
-              fill:  { fgColor: { rgb: even ? 'FFFFFF' : 'F0FDF4' } },
-              border: THIN_BORDER,
-              alignment: { horizontal: c === 0 ? 'left' : 'center' },
-            }
-          }
-        }
-      }
-
-      const sheetName = d.name.replace(/:$/, '').trim().slice(0, 31)
-      XLSX.utils.book_append_sheet(wb, ws, sheetName)
-    }
-
-    XLSX.writeFile(wb, `ems-summary-${new Date().toISOString().slice(0, 10)}.xlsx`, { cellStyles: true })
-  }
-
-  const toggleDistrict = (id: string) =>
-    setOpenDistricts(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
-
-  const toggleStation = (id: string) =>
-    setOpenStations(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -416,16 +270,6 @@ export default function OrdersView({ data }: { data: OrdersData }) {
               </svg>
               Place Order
             </Link>
-            <button
-              onClick={tab === 'orders' ? handleExportOrders : handleExportSummary}
-              disabled={filteredRows.length === 0}
-              className="flex items-center gap-2 px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors shadow disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              Download Excel
-            </button>
           </div>
         </div>
 
