@@ -1,4 +1,15 @@
+// ─── ItemSummary type for aggregateStation ────────────────────────────────
+interface ItemSummary {
+  name: string;
+  total: number;
+  male: number;
+  female: number;
+  maleSizes: Record<string, number>;
+  femaleSizes: Record<string, number>;
+}
+
 import * as XLSX from 'xlsx'
+import type { District, Order } from '../app/components/order-form';
 
 // ─── Types (copied from orders-view) ───────────────────────────────────────
 // If you want to keep types in sync, consider extracting them to a shared types file.
@@ -7,7 +18,7 @@ import * as XLSX from 'xlsx'
 // interface FlatRow { ... } // Not strictly needed for JS, but for TS you can copy from orders-view
 
 // ─── Flat row used for the table and Excel ─────────────────────────────────
-function flatten(districts) {
+function flatten(districts: District[]) {
   const rows = [];
   for (const d of districts) {
     for (const s of d.stattions) {
@@ -21,6 +32,7 @@ function flatten(districts) {
             lastname: o.lastname,
             recipientname: o.recipientname,
             recipientlastname: o.recipientlastaname,
+            rank: o.rank ?? '—', // <-- Add this line
             percalid: o.percal ?? '',
             date,
             item: '—',
@@ -36,6 +48,7 @@ function flatten(districts) {
               lastname: o.lastname,
               recipientname: o.recipientname,
               recipientlastname: o.recipientlastaname,
+              rank: o.rank ?? '—', // <-- Add this line
               percalid: o.percal ?? '',
               date,
               item: u.name,
@@ -51,8 +64,8 @@ function flatten(districts) {
 }
 
 // ─── Summary aggregation ───────────────────────────────────────────────────
-function aggregateStation(orders) {
-  const map = {}
+function aggregateStation(orders: Order[]) {
+  const map: Record<string, ItemSummary> = {};
   for (const o of orders) {
     for (const u of o.uniforms) {
       const qty = parseInt(u.quantity) || 1
@@ -80,7 +93,7 @@ const THIN_BORDER = {
   right:  { style: 'thin', color: { rgb: 'CCCCCC' } },
 }
 
-export function exportAllOrdersExcel(districts) {
+export function exportAllOrdersExcel(districts: District[]) {
   const headers = [
     'District',
     'Station',
@@ -88,12 +101,14 @@ export function exportAllOrdersExcel(districts) {
     'Last Name',
     'Recipient Name',
     'Recipient Last Name',
+    'Rank',                // <-- 1. Insert header here
     'Recipient Persal ID',
     'Date',
     'Item',
     'Size',
     'Qty',
   ];
+  
   const allFlatRows = flatten(districts);
   const rows = allFlatRows.map(r => [
     r.district  || '-',
@@ -102,44 +117,49 @@ export function exportAllOrdersExcel(districts) {
     r.lastname  || '-',
     r.recipientname || '-',
     r.recipientlastname || '-',
+    r.rank      || '-',    // <-- 2. Insert row data value here
     r.percalid  || '-',
     r.date      || '-',
     r.item      || '-',
     r.size      || '-',
     r.quantity  || '-',
   ]);
+  
   const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-  ws['!cols'] = [24, 22, 14, 14, 18, 18, 18, 12, 36, 10, 6].map(w => ({ wch: w }));
+  
+  // 3. Insert a column width (e.g., 16) for Rank right before the Persal ID width (18)
+  ws['!cols'] = [24, 22, 14, 14, 18, 18, 16, 18, 12, 36, 10, 6].map(w => ({ wch: w }));
 
-  const numCols = headers.length
+  const numCols = headers.length;
   for (let c = 0; c < numCols; c++) {
-    const cell = ws[XLSX.utils.encode_cell({ r: 0, c })]
-    if (!cell) continue
+    const cell = ws[XLSX.utils.encode_cell({ r: 0, c })];
+    if (!cell) continue;
     cell.s = {
       font:    { bold: true, color: { rgb: 'FFFFFF' } },
       fill:    { fgColor: { rgb: '1A7A3C' } },
       border:  THIN_BORDER,
       alignment: { horizontal: 'center' },
-    }
+    };
   }
+  
   for (let r = 1; r <= rows.length; r++) {
     for (let c = 0; c < numCols; c++) {
-      const cell = ws[XLSX.utils.encode_cell({ r, c })]
-      if (!cell) continue
-      cell.s = { border: THIN_BORDER, alignment: { horizontal: c >= numCols - 1 ? 'center' : 'left' } }
+      const cell = ws[XLSX.utils.encode_cell({ r, c })];
+      if (!cell) continue;
+      cell.s = { border: THIN_BORDER, alignment: { horizontal: c >= numCols - 1 ? 'center' : 'left' } };
     }
   }
 
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'All Orders')
-  XLSX.writeFile(wb, `ems-orders-${new Date().toISOString().slice(0, 10)}.xlsx`, { cellStyles: true })
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'All Orders');
+  XLSX.writeFile(wb, `ems-orders-${new Date().toISOString().slice(0, 10)}.xlsx`, { cellStyles: true });
 }
 
-export function exportSummaryExcel(districts) {
+export function exportSummaryExcel(districts: District[]) {
   const wb = XLSX.utils.book_new()
   for (const d of districts) {
-    const sheetRows = []
-    const sectionMeta = { districtRow: undefined, stationRows: [] }
+    const sheetRows: (string | number)[][] = [];
+    const sectionMeta: { districtRow: number | undefined; stationRows: { headerRow: number; dataStart: number; dataEnd: number }[] } = { districtRow: undefined, stationRows: [] };
     sectionMeta.districtRow = sheetRows.length
     sheetRows.push([`DISTRICT: ${d.name}`, '', '', '', '', ''])
     sheetRows.push([])
@@ -149,11 +169,11 @@ export function exportSummaryExcel(districts) {
       sheetRows.push([`Station: ${s.name}`, '', '', '', '', ''])
       sheetRows.push(['Item', 'Total', 'Male', 'Male Sizes', 'Female', 'Female Sizes'])
       const dataStart = sheetRows.length
-      const fmtSizes = (sizes) =>
+      const fmtSizes = (sizes: Record<string, number>) =>
         Object.entries(sizes)
           .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
           .map(([sz, cnt]) => `${sz}: ${cnt}`)
-          .join(', ') || '-'
+          .join(', ') || '-';
       if (stationItems.length === 0) {
         sheetRows.push(['No orders yet', '-', '-', '-', '-', '-'])
       } else {

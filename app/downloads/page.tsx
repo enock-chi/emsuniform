@@ -1,8 +1,9 @@
 import { hygraphQuery } from "@/lib/hygraph";
 import DownloadsClient from "./DownloadsClient";
+import type { District } from '../components/order-form';
 
 export default async function DownloadsPage() {
-  const { districts } = await hygraphQuery(`
+  const { districts } = await hygraphQuery<{ districts: District[] }>(`
     query {
       districts(first: 100) {
         id
@@ -16,6 +17,7 @@ export default async function DownloadsPage() {
             lastname
             recipientname
             recipientlastaname
+            rank
             percal
             ismale
             createdAt

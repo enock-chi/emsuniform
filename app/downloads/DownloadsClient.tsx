@@ -1,8 +1,13 @@
 "use client";
 import { exportAllOrdersExcel, exportSummaryExcel } from '../../lib/excel-exports';
 import { useState } from 'react';
+import type { District } from '../components/order-form';
 
-export default function DownloadsClient({ districts }) {
+interface DownloadsClientProps {
+  districts: District[];
+}
+
+export default function DownloadsClient({ districts }: DownloadsClientProps) {
   const [loading, setLoading] = useState(false);
 
   const handleDownloadSummary = () => {

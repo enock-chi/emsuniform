@@ -6,9 +6,31 @@ import Link from 'next/link'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+
+export interface Uniform {
+  id: string;
+  name: string;
+  size: string;
+  quantity: string;
+}
+
+export interface Order {
+  id: string;
+  firstname: string;
+  lastname: string;
+  recipientname: string;
+  recipientlastaname: string;
+  rank?: string;
+  percal: string;
+  ismale: boolean;
+  createdAt: string;
+  uniforms: Uniform[];
+}
+
 export interface Stattion {
-  id: string
-  name: string
+  id: string;
+  name: string;
+  orders: Order[];
 }
 
 export interface District {
