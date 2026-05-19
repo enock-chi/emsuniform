@@ -56,34 +56,38 @@ const KIT_CATEGORIES: KitCategory[] = [
     id: 'uniform_operation',
     name: 'UNIFORM OPERATION',
     items: [
-      { id: 'advance_rescue_suit_male',        name: 'Advance Rescue Suit (Male)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'advance_rescue_suit_female',      name: 'Advance Rescue Suit (Female)',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'advance_rescue_suit_male',        name: 'Advance Rescue Suit (Male)',           sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'advance_rescue_suit_female',      name: 'Advance Rescue Suit (Female)',         sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
       { id: 'base_ball_caps',             name: 'Base Ball Caps',                     sizes: ['One Size'] },
       { id: 'beanie_green',               name: 'Beanie Green',                       sizes: ['One Size'] },
-      { id: 'combat_boots',               name: 'Combat Boots',                       sizes: ['3','4','5','6','7','8','9','10','11','12'] },
-      { id: 'bunny_jacket_green',         name: 'Bunny Jacket Green',                 sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'combat_belt',                name: 'Combat Belt',                        sizes: ['S','M','L','XL'] },
-      { id: 'combat_trouser_green',       name: 'Combat Trouser Green',               sizes: ['28','30','32','34','36','38','40','42','44','46','48','50','52','54','56'] },
+      { id: 'combat_boots',               name: 'Combat Boots',                       sizes: [
+        '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60'] },
+      { id: 'bunny_jacket_green',         name: 'Bunny Jacket Green',                 sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'combat_belt',                name: 'Combat Belt',                        sizes: ['XXXS','XXS','XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'combat_trouser_green',       name: 'Combat Trouser Green',               sizes: [
+        '22','24','26','28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
       { id: 'epaulette',                  name: 'Epaulette',                          sizes: ['One Size'] },
-      { id: 'jersey_long_sleeve_green_male',   name: 'Jersey Long Sleeve Green (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'jersey_long_sleeve_green_female', name: 'Jersey Long Sleeve Green (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'jump_suit_green_male',            name: 'Jump-Suit Green (Male)',             sizes: ['28','30','32','34','36','38','40','42','44','46','48','50'] },
-      { id: 'jump_suit_green_female',          name: 'Jump-Suit Green (Female)',           sizes: ['28','30','32','34','36','38','40','42','44','46','48','50'] },
-      { id: 'rescue_gloves',              name: 'Rescue Gloves',                      sizes: ['S','M','L','XL'] },
-      { id: 'rain_suit_two_piece_green',  name: 'Rain-Suit Two Piece Green',          sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_ss_green_male',         name: 'Shirt S/S Green (Male)',             sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_ss_green_female',       name: 'Shirt S/S Green (Female)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_ls_green_male',         name: 'Shirt L/S Green (Male)',             sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'shirt_ls_green_female',       name: 'Shirt L/S Green (Female)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'short_sleeve_tshirt',        name: 'Short Sleeve T-Shirt',               sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jersey_long_sleeve_green_male',   name: 'Jersey Long Sleeve Green (Male)',   sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'jersey_long_sleeve_green_female', name: 'Jersey Long Sleeve Green (Female)', sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'jump_suit_green_male',            name: 'Jump-Suit Green (Male)',             sizes: [
+        '18','20','22','24','26','28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
+      { id: 'jump_suit_green_female',          name: 'Jump-Suit Green (Female)',           sizes: [
+        '18','20','22','24','26','28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
+      { id: 'rescue_gloves',              name: 'Rescue Gloves',                      sizes: ['XXXS','XXS','XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'rain_suit_two_piece_green',  name: 'Rain-Suit Two Piece Green',          sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'shirt_ss_green_male',         name: 'Shirt S/S Green (Male)',             sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'shirt_ss_green_female',       name: 'Shirt S/S Green (Female)',           sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'shirt_ls_green_male',         name: 'Shirt L/S Green (Male)',             sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'shirt_ls_green_female',       name: 'Shirt L/S Green (Female)',           sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'short_sleeve_tshirt',        name: 'Short Sleeve T-Shirt',               sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
       { id: 'socks_long_ops',             name: 'Socks Long For OPS',                 sizes: ['One Size'] },
       { id: 'socks_short_ops',            name: 'Socks Short For OPS',                sizes: ['One Size'] },
       { id: 'stars_of_life',              name: 'Stars Of Life',                      sizes: ['One Size'] },
       { id: 'id_qualification_badge',     name: 'Identification Qualification Badge', sizes: ['One Size'] },
-      { id: 'soft_shell_jacket_green_male',    name: 'Soft-Shell Jacket Green (Male)',    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'soft_shell_jacket_green_female',  name: 'Soft-Shell Jacket Green (Female)',  sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'reflective_jacket_green_male',    name: 'Reflective Jacket Green (Male)',    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'reflective_jacket_green_female',  name: 'Reflective Jacket Green (Female)',  sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'soft_shell_jacket_green_male',    name: 'Soft-Shell Jacket Green (Male)',    sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'soft_shell_jacket_green_female',  name: 'Soft-Shell Jacket Green (Female)',  sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'reflective_jacket_green_male',    name: 'Reflective Jacket Green (Male)',    sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
+      { id: 'reflective_jacket_green_female',  name: 'Reflective Jacket Green (Female)',  sizes: ['XXXXXXS','XXXXXS','XXXXS','XXXS','XXS','XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL'] },
     ],
   },
   {
@@ -95,22 +99,26 @@ const KIT_CATEGORIES: KitCategory[] = [
       { id: 'shirt_ls_white_male',   name: 'Shirt L/S White (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_ls_white_female', name: 'Shirt L/S White (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'stepout_trouser_belt', name: 'Stepout Trouser Belt',   sizes: ['S','M','L','XL'] },
-      { id: 'stepout_trouser',      name: 'Stepout Trouser',        sizes: ['28','30','32','34','36','38','40','42'] },
+      { id: 'stepout_trouser',      name: 'Stepout Trouser',        sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
       { id: 'stepout_skirt',        name: 'Stepout Skirt',          sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'jacket_blazer',        name: 'Jacket Blazer',          sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'bunny_jacket_blue',    name: 'Bunny Jacket Blue',      sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'jersey_blue_manager',  name: 'Jersey Blue Manager',    sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'parabelum_shoes',      name: 'Parabelum Shoes',        sizes: ['3','4','5','6','7','8','9','10','11','12'] },
+      { id: 'parabelum_shoes',      name: 'Parabelum Shoes',        sizes: [
+        '3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60'] },
       { id: 'scarf',                name: 'Scarf',                  sizes: ['One Size'] },
       { id: 'pantyhose',            name: 'Pantyhose',              sizes: ['One Size'] },
-      { id: 'court_shoes',          name: 'Court Shoes',            sizes: ['3','4','5','6','7','8','9','10','11','12'] },
+      { id: 'court_shoes',          name: 'Court Shoes',            sizes: [
+        '3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60'] },
     ],
   },
   {
     id: 'control_uniform',
     name: 'CONTROL UNIFORM',
     items: [
-      { id: 'jean_control',           name: 'Jean For Control',       sizes: ['28','30','32','34','36','38','40','42'] },
+      { id: 'jean_control',           name: 'Jean For Control',       sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
       { id: 'scarf_control',          name: 'Scarf For Control',      sizes: ['One Size'] },
       { id: 'winter_bomber_jacket',   name: 'Winter Bomber Jacket',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_blue_ss_control_male',   name: 'Shirt Blue S/S Control (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
@@ -118,7 +126,8 @@ const KIT_CATEGORIES: KitCategory[] = [
       { id: 'shirt_blue_ls_control_male',   name: 'Shirt Blue L/S Control (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_blue_ls_control_female', name: 'Shirt Blue L/S Control (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'jersey_control',         name: 'Jersey Control',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'chino_trouser',          name: 'Chino Trouser',          sizes: ['28','30','32','34','36','38','40','42'] },
+      { id: 'chino_trouser',          name: 'Chino Trouser',          sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
       { id: 'golfer_tshirt',          name: 'Golfer T-Shirt',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
     ],
   },
@@ -130,7 +139,8 @@ const KIT_CATEGORIES: KitCategory[] = [
       { id: 'long_coat',           name: 'Long Coat',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'beanie_blue',         name: 'Beanie Blue',         sizes: ['One Size'] },
       { id: 'floppy_hat',          name: 'Floppy Hat',          sizes: ['One Size'] },
-      { id: 'safety_boots',        name: 'Safety Boots',        sizes: ['3','4','5','6','7','8','9','10','11','12'] },
+      { id: 'safety_boots',        name: 'Safety Boots',        sizes: [
+        '3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60'] },
       { id: 'soft_shell_jacket',   name: 'Soft-Shell Jacket',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
     ],
   },
@@ -431,6 +441,7 @@ export default function OrderForm({ districts }: { districts: District[] }) {
                   <option value="ECO-ILS">ECO-ILS</option>
                   <option value="ECO-ALS">ECO-ALS</option>
                   <option value="ECO-ECT">ECO-ECT</option>
+                  <option value="ECA">ECA</option>
                   <option value="ECP">ECP</option>
                   <option value="Station Manager">Station Manager</option>
                   <option value="Shift Leader">Shift Leader</option>
