@@ -232,10 +232,6 @@ interface OrdersViewProps {
 }
 
 export default function OrdersView({ orders }: OrdersViewProps) {
-    // Debug: log orders to browser console
-    useEffect(() => {
-      console.log('[OrdersView] Orders prop:', orders);
-    }, [orders]);
   const [tab, setTab] = useState<'summary' | 'orders'>('summary');
   const [filterDistrict, setFilterDistrict] = useState('');
   const [filterStation, setFilterStation] = useState('');

@@ -10,7 +10,6 @@ export async function GET() {
     if (!data) return NextResponse.json({ orders: [] });
     // TODO: Orders are returned as-is from Redis. If you change the data structure in Redis, update this logic.
     const orders = data.filter(Boolean);
-    console.log('[orders-redis-server] Orders (first 3):', orders.slice(0, 3)); // TODO: Remove or adjust this log for production.
     return NextResponse.json({ orders });
   } catch (err) {
     console.error('[orders-redis-server] Redis fetch error:', err);
