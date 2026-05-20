@@ -7,8 +7,8 @@ const geistSans = GeistSans;
 const geistMono = GeistMono;
 
 export const metadata: Metadata = {
-  title: "PHOC Gauteng EMS – Uniform Kit Order",
-  description: "Gauteng EMS uniform kit order and tracking system",
+  title: "PHOC – Uniform Order",
+  description: "PHOC uniform order and tracking system",
 };
 
 export default function RootLayout({

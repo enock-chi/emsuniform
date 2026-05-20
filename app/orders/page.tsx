@@ -36,6 +36,10 @@ async function getOrdersData(): Promise<OrdersData> {
 }
 
 export default async function OrdersPage() {
-  const data = await getOrdersData()
-  return <OrdersView data={data} />
+  // Fetch orders from the new server API route (use relative URL for internal API)
+  const res = await fetch('http://localhost:3000/api/orders-redis-server', { cache: 'no-store' });
+  const data = await res.json();
+  console.log('[OrdersPage] API response:', data);
+  const { orders } = data;
+  return <OrdersView orders={orders || []} />
 }
