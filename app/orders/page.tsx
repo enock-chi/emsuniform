@@ -24,7 +24,6 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
-  if (loading) return <div className="p-10 text-center text-gray-400">Loading orders…</div>;
-  if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
-  return <OrdersView orders={orders} />;
+  // Always render OrdersView, pass loading and error as props
+  return <OrdersView orders={orders} loading={loading} error={error} />;
 }

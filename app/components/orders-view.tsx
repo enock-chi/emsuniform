@@ -229,9 +229,11 @@ function StationSummaryTable({ items }: { items: ItemSummary[] }) {
 
 interface OrdersViewProps {
   orders: Order[];
+  loading?: boolean;
+  error?: string;
 }
 
-export default function OrdersView({ orders }: OrdersViewProps) {
+export default function OrdersView({ orders, loading, error }: OrdersViewProps) {
   const [tab, setTab] = useState<'summary' | 'orders'>('summary');
   const [filterDistrict, setFilterDistrict] = useState('');
   const [filterStation, setFilterStation] = useState('');
@@ -301,6 +303,7 @@ export default function OrdersView({ orders }: OrdersViewProps) {
   const totalOrders = useMemo(() => orders.length, [orders]);
   const totalItems = useMemo(() => filteredRows.reduce((sum, r) => sum + r.quantity, 0), [filteredRows]);
 
+
   return (
     <div className="min-h-screen bg-gray-100">
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
@@ -331,14 +334,20 @@ export default function OrdersView({ orders }: OrdersViewProps) {
             { label: 'Items in View', value: totalItems },
             { label: 'Rows in View', value: filteredRows.length },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl shadow p-5">
+            <div key={s.label} className="bg-white rounded-xl shadow p-5 flex flex-col items-center justify-center min-h-[80px]">
               <p className="text-sm text-gray-500">{s.label}</p>
               <p className="text-3xl font-bold text-green-700 mt-1">{s.value}</p>
+              {loading && <span className="text-xs text-blue-500 mt-2 animate-pulse">Updating…</span>}
             </div>
           ))}
         </div>
 
         {/* Tabs + Filters */}
+        {error && (
+          <div className="bg-red-100 text-red-700 rounded-lg px-4 py-3 mb-4 text-center font-semibold">
+            {error}
+          </div>
+        )}
         <div className="bg-white rounded-xl shadow p-5 space-y-4">
           {/* Tabs */}
           <div className="flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
