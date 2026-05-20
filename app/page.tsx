@@ -2,7 +2,7 @@
 import OrderForm, { type District } from '@/app/components/order-form'
 
 // Toggle this to true to enable maintenance mode
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 async function getDistricts(): Promise<District[]> {
   const { districts } = await hygraphQuery<{ districts: District[] }>(`
