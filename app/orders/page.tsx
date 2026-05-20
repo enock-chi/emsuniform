@@ -1,45 +1,30 @@
-import { hygraphQuery } from '@/lib/hygraph'
-import OrdersView, { type OrdersData } from '@/app/components/orders-view'
 
-export const dynamic = 'force-dynamic'
+"use client";
+import { useEffect, useState } from "react";
+import OrdersView from "@/app/components/orders-view";
 
-async function getOrdersData(): Promise<OrdersData> {
-  const { districts } = await hygraphQuery<{ districts: OrdersData['districts'] }>(`
-    query {
-      districts(first: 100) {
-        id
-        name
-        stattions(first: 100) {
-          id
-          name
-          orders(first: 1000) {
-            id
-            firstname
-            lastname
-            recipientname
-            recipientlastaname
-            percal
-            ismale
-            createdAt
-            uniforms {
-              id
-              name
-              size
-              quantity
-            }
-          }
-        }
+export default function OrdersPage() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        const res = await fetch("/api/orders-redis-server", { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.orders || []);
+      } catch (err) {
+        setError("Could not load orders.");
+      } finally {
+        setLoading(false);
       }
     }
-  `)
-  return { districts }
-}
+    fetchOrders();
+  }, []);
 
-export default async function OrdersPage() {
-  // Fetch orders from the new server API route (use relative URL for internal API)
-  const res = await fetch('http://localhost:3000/api/orders-redis-server', { cache: 'no-store' });
-  const data = await res.json();
-  console.log('[OrdersPage] API response:', data);
-  const { orders } = data;
-  return <OrdersView orders={orders || []} />
+  if (loading) return <div className="p-10 text-center text-gray-400">Loading orders…</div>;
+  if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
+  return <OrdersView orders={orders} />;
 }
