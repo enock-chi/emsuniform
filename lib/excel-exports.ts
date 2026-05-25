@@ -90,7 +90,7 @@ function flatten(districts: District[]) {
             recipientname: o.recipientname,
             recipientlastname: o.recipientlastaname,
             rank: o.rank ?? '—', // <-- Add this line
-            percalid: o.percal ?? '',
+            percalid: o.recipientpercalid ?? '',
             date,
             item: '—',
             size: '—',
@@ -106,7 +106,7 @@ function flatten(districts: District[]) {
               recipientname: o.recipientname,
               recipientlastname: o.recipientlastaname,
               rank: o.rank ?? '—', // <-- Add this line
-              percalid: o.percal ?? '',
+              percalid: o.recipientpercalid ?? '',
               date,
               item: u.name,
               size: u.size,

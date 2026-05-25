@@ -21,7 +21,7 @@ export interface Order {
   recipientname: string;
   recipientlastaname: string;
   rank?: string;
-  percal: string;
+  recipientpercalid: string;
   ismale: boolean;
   createdAt: string;
   uniforms: Uniform[];

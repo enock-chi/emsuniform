@@ -1,36 +1,27 @@
-import { hygraphQuery } from "@/lib/hygraph";
+import { buildStationMap } from "@/lib/hygraph";
+import { redis } from "@/lib/redis";
 import DownloadsClient from "./DownloadsClient";
-import type { District } from '../components/order-form';
 
 export default async function DownloadsPage() {
-  const { districts } = await hygraphQuery<{ districts: District[] }>(`
-    query {
-      districts(first: 100) {
-        id
-        name
-        stattions(first: 100) {
-          id
-          name
-          orders(first: 1000) {
-            id
-            firstname
-            lastname
-            recipientname
-            recipientlastaname
-            rank
-            percal
-            ismale
-            createdAt
-            uniforms {
-              id
-              name
-              size
-              quantity
-            }
-          }
+  let orders = [];
+  
+  try {
+    const redisOrders = await redis.lrange('order_queue', 0, -1);
+    orders = redisOrders
+      .map((item) => {
+        try {
+          return typeof item === 'string' ? JSON.parse(item) : item;
+        } catch {
+          return null;
         }
-      }
-    }
-  `);
-  return <DownloadsClient districts={districts} />;
+      })
+      .filter(Boolean);
+  } catch (err) {
+    console.error('[Downloads] Redis fetch error:', err);
+  }
+
+  // Fetch station mappings from Hygraph
+  const stationMap = await buildStationMap();
+
+  return <DownloadsClient orders={orders} stationMap={stationMap} />;
 }

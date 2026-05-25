@@ -1,45 +1,12 @@
 
 "use client"
-// --- Static mapping: stationId -> { stationName, districtName } ---
-const STATION_MAP: Record<string, { stationName: string; districtName: string }> = {
-  // Districts as their own entries (for completeness)
-  'cmp1o64gdm21207tdoeslbv5w': { stationName: 'City Of Johannesburg', districtName: 'City Of Johannesburg' },
-  'cmp1o5t68mp0e07tdqf0jb56h': { stationName: 'CityOF Ekurhuleni', districtName: 'CityOF Ekurhuleni' },
-  'cmp1o71men7up7tdm1bol6up': { stationName: 'West Rand', districtName: 'West Rand' },
-  'cmp1o6hm63sge7uqg81d4ig0': { stationName: 'Sedibeng', districtName: 'Sedibeng' },
-  'cmp1o5ingd6w07tdthah4p7z': { stationName: 'City of Tshwane', districtName: 'City of Tshwane' },
-  'cmpk74yhs1f6t7tga16n6ho': { stationName: 'Head Office', districtName: 'Head Office' },
-
-  // Stations (from screenshots, grouped by district)
-  // City Of Johannesburg
-  'cmpb1ff7d7p4j8w1q8usdoed': { stationName: 'Heidelberg', districtName: 'City Of Johannesburg' },
-  'cmpb2m8nt4ytc5v4uk4irw4': { stationName: 'Far East Rand', districtName: 'City Of Johannesburg' },
-  'cmpb2ngj6ks9t7cz4lucx6r': { stationName: 'KHuTsohong', districtName: 'City Of Johannesburg' },
-  'cmpb3ngj6ks9t7cz4lucx6r': { stationName: 'Nokuthula Ngwenya', districtName: 'City Of Johannesburg' },
-  'cmpb4ngj6ks9t7cz4lucx6r': { stationName: 'ECC - Support', districtName: 'City Of Johannesburg' },
-  'cmpb5ngj6ks9t7cz4lucx6r': { stationName: 'Lenasia', districtName: 'City Of Johannesburg' },
-  'cmpb6ngj6ks9t7cz4lucx6r': { stationName: 'Vanderbijl Park', districtName: 'City Of Johannesburg' },
-  'cmpb7ngj6ks9t7cz4lucx6r': { stationName: 'Daggafontein', districtName: 'City Of Johannesburg' },
-  'cmpb8ngj6ks9t7cz4lucx6r': { stationName: 'Springs', districtName: 'City Of Johannesburg' },
-  'cmpb9ngj6ks9t7cz4lucx6r': { stationName: 'Vereeniging', districtName: 'City Of Johannesburg' },
-  'cmpba0ngj6ks9t7cz4lucx6r': { stationName: 'Devon', districtName: 'City Of Johannesburg' },
-  'cmpbb0ngj6ks9t7cz4lucx6r': { stationName: 'Pholosong', districtName: 'City Of Johannesburg' },
-  'cmpbc0ngj6ks9t7cz4lucx6r': { stationName: 'BARA/ELDOS', districtName: 'City Of Johannesburg' },
-  'cmpbd0ngj6ks9t7cz4lucx6r': { stationName: 'Temba', districtName: 'City Of Johannesburg' },
-  'cmpbe0ngj6ks9t7cz4lucx6r': { stationName: 'Hillbrow', districtName: 'City Of Johannesburg' },
-  'cmpbf0ngj6ks9t7cz4lucx6r': { stationName: 'Goba', districtName: 'City Of Johannesburg' },
-  'cmpbg0ngj6ks9t7cz4lucx6r': { stationName: 'Alex', districtName: 'City Of Johannesburg' },
-  'cmpbh0ngj6ks9t7cz4lucx6r': { stationName: 'Zola', districtName: 'City Of Johannesburg' },
-  'cmpbi0ngj6ks9t7cz4lucx6r': { stationName: 'Chiawelo', districtName: 'City Of Johannesburg' },
-  'cmpbj0ngj6ks9t7cz4lucx6r': { stationName: 'Imbali', districtName: 'City Of Johannesburg' },
-
-  // ... (repeat for all other stations from your screenshots, grouped by their district)
-  // You can continue filling in the rest using the same pattern.
-};
 
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import * as XLSX from 'xlsx'
+
+// --- Static mapping: stationId -> { stationName, districtName, stations? } ---
+type StationEntry = { stationName: string; districtName: string; stations?: Record<string, { stationName: string; districtName: string }> }
 
 // ─── Excel helpers ────────────────────────────────────────────────────────────
 
@@ -65,7 +32,7 @@ interface Order {
   lastname: string
   recipientname: string
   recipientlastaname: string
-  percal: string
+  recipientpercalid: string
   ismale: boolean
   createdAt: string
   uniforms: Uniform[]
@@ -155,10 +122,10 @@ function flatten(districts: District[]): FlatRow[] {
       for (const o of s.orders) {
         const date = new Date(o.createdAt).toLocaleDateString('en-ZA')
         if (o.uniforms.length === 0) {
-          rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, percalid: o.percal ?? '', date, item: '—', size: '—', quantity: 0 })
+          rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, percalid: o.recipientpercalid ?? '', date, item: '—', size: '—', quantity: 0 })
         } else {
           for (const u of o.uniforms) {
-            rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, percalid: o.percal ?? '', date, item: u.name, size: u.size, quantity: parseInt(u.quantity) || 1 })
+            rows.push({ district: d.name, station: s.name, firstname: o.firstname, lastname: o.lastname, percalid: o.recipientpercalid ?? '', date, item: u.name, size: u.size, quantity: parseInt(u.quantity) || 1 })
           }
         }
       }
@@ -239,19 +206,39 @@ export default function OrdersView({ orders, loading, error }: OrdersViewProps) 
   const [filterStation, setFilterStation] = useState('');
   const [openDistricts, setOpenDistricts] = useState<Set<string>>(new Set());
   const [openStations, setOpenStations] = useState<Set<string>>(new Set());
+  const [stationMappingData, setStationMappingData] = useState<Record<string, StationEntry>>({});
+
+  // Fetch station map from API on mount
+  useEffect(() => {
+    const fetchStationMap = async () => {
+      try {
+        const res = await fetch('/api/station-map');
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(`Failed to fetch station map: ${res.status} ${res.statusText}${errorData.details ? ` - ${errorData.details}` : ''}`);
+        }
+        const data = await res.json();
+        setStationMappingData(data.stationMap);
+      } catch (err) {
+        console.error('Error fetching station map:', err);
+        // Continue with empty map if fetch fails
+      }
+    };
+
+    fetchStationMap();
+  }, []);
 
   // Group orders by station and district for compatibility with existing UI
   // TODO: Many orders are showing as 'Unknown District'.
-  // This is because their stationId is not in STATION_MAP.
-  // When you have time, update STATION_MAP to include all stationIds in your data.
-  // You can also consider fetching station/district info from a canonical source (e.g., Hygraph) instead of a static map.
+  // This is because their stationId is not in the station mapping.
+  // Station data is now fetched from Hygraph and built dynamically.
   // For now, this will group all unknowns under 'Unknown District'.
   const districts: District[] = useMemo(() => {
     const districtMap: Record<string, District> = {};
     const stationMap: Record<string, Stattion> = {};
     for (const o of orders) {
       const stationId = o.stationId || 'unknown';
-      const mapping = STATION_MAP[stationId];
+      const mapping = stationMappingData[stationId];
       const stationName = mapping ? mapping.stationName : stationId;
       const districtName = mapping ? mapping.districtName : 'Unknown District';
       const districtId = mapping ? mapping.districtName : 'unknown';
@@ -264,7 +251,7 @@ export default function OrdersView({ orders, loading, error }: OrdersViewProps) 
       }
     }
     return Object.values(districtMap);
-  }, [orders]);
+  }, [orders, stationMappingData]);
 
 
   const allRows = useMemo(() => flatten(districts), [districts]);
