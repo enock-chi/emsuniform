@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <div style={{ background: '#FFF3CD', borderBottom: '2px solid #FFC107', padding: '16px 20px', textAlign: 'center', color: '#856404' }}>
           <p style={{ margin: 0, fontSize: 16, fontWeight: 500, lineHeight: 1.5 }}>
-            Please note: All submissions will be stopped on <strong>Friday, May 29th at 10:00 PM</strong>. We kindly ask that you complete all your submissions by then. Thank you!
+            Please note: All submissions will be stopped on <strong>Friday, May 29th at 10:00 AM</strong>. We kindly ask that you complete all your submissions by then. Thank you!
           </p>
         </div>
         {children}
