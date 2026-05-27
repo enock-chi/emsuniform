@@ -117,18 +117,39 @@ export const KIT_CATEGORIES: KitCategory[] = [
     id: 'control_uniform',
     name: 'CONTROL UNIFORM',
     items: [
-      { id: 'jean_control',           name: 'Jean For Control',       sizes: [
+      { id: 'jean_control_male',      name: 'Jean For Control (Male)',        sizes: [
         '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
-      { id: 'scarf_control',          name: 'Scarf For Control',      sizes: ['One Size'] },
-      { id: 'winter_bomber_jacket',   name: 'Winter Bomber Jacket',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jean_control_female',    name: 'Jean For Control (Female)',      sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
+      { id: 'chino_trouser_male',     name: 'Chino Trouser (Male)',           sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
+      { id: 'chino_trouser_female',   name: 'Chino Trouser (Female)',         sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
+      { id: 'stepout_trouser_male',   name: 'Stepout Trouser (Male)',         sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
+      { id: 'stepout_trouser_female', name: 'Stepout Trouser (Female)',       sizes: [
+        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
+      { id: 'control_skirt',          name: 'Skirt For Control',              sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'scarf_control',          name: 'Scarf For Control',              sizes: ['One Size'] },
+      { id: 'winter_bomber_jacket_male',   name: 'Winter Bomber Jacket (Male)',     sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'winter_bomber_jacket_female', name: 'Winter Bomber Jacket (Female)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_blue_ss_control_male',   name: 'Shirt Blue S/S Control (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_blue_ss_control_female', name: 'Shirt Blue S/S Control (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_blue_ls_control_male',   name: 'Shirt Blue L/S Control (Male)',   sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
       { id: 'shirt_blue_ls_control_female', name: 'Shirt Blue L/S Control (Female)', sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'jersey_control',         name: 'Jersey Control',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
-      { id: 'chino_trouser',          name: 'Chino Trouser',          sizes: [
-        '28','30','32','34','36','38','40','42','44','46','48','50','52','54','56','58','60'] },
-      { id: 'golfer_tshirt',          name: 'Golfer T-Shirt',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jersey_control_male',    name: 'Jersey Control (Male)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'jersey_control_female',  name: 'Jersey Control (Female)',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'golfer_tshirt_male',     name: 'Golfer T-Shirt (Male)',           sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'golfer_tshirt_female',   name: 'Golfer T-Shirt (Female)',         sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'beanie_control',         name: 'Beanie For Control',              sizes: ['One Size'] },
+      { id: 'rain_suit_control_male',      name: 'Rain-Suit For Control (Male)',        sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'rain_suit_control_female',    name: 'Rain-Suit For Control (Female)',      sizes: ['XS','S','M','L','XL','XXL','XXXL'] },
+      { id: 'parabelum_shoes_control',name: 'Parabelum Shoes',                 sizes: [
+        '3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60'] },
+      { id: 'court_shoes_control',    name: 'Court Shoes',                    sizes: [
+        '3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60'] },
+      { id: 'stars_of_life_control',  name: 'Stars Of Life',                  sizes: ['One Size'] },
+      { id: 'control_badge',          name: 'Identification Badge',            sizes: ['One Size'] },
     ],
   },
   {
