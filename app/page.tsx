@@ -42,7 +42,7 @@ export default async function Home() {
             padding: '48px 32px',
           }}
         >
-          <h1 style={{ color: '#fff', background: '#007A3D', padding: '10px 28px', borderRadius: 10, marginBottom: 18, fontWeight: 700, fontSize: 28, letterSpacing: 1 }}>Maintenance Break</h1>
+          <h1 style={{ color: '#fff', background: '#007A3D', padding: '10px 28px', borderRadius: 10, marginBottom: 18, fontWeight: 700, fontSize: 28, letterSpacing: 1 }}>Service Closure</h1>
           <p style={{ fontSize: 18, lineHeight: 1.7, color: '#007A3D', marginBottom: 0 }}>
             Thank you for your cooperation.<br />
             This website has officially stopped operations.
