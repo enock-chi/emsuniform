@@ -2,6 +2,8 @@ import { buildStationMap } from "@/lib/hygraph";
 import { redis } from "@/lib/redis";
 import DownloadsClient from "./DownloadsClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DownloadsPage() {
   let orders = [];
   
